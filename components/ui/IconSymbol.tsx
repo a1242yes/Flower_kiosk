@@ -1,29 +1,46 @@
-// Fallback for using MaterialIcons on Android and web.
+import { Image } from "expo-image";
+import { SymbolViewProps, SymbolWeight } from "expo-symbols";
+import {
+  OpaqueColorValue,
+  type ImageStyle,
+  type StyleProp,
+} from "react-native";
 
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { SymbolWeight, SymbolViewProps } from 'expo-symbols';
-import { ComponentProps } from 'react';
-import { OpaqueColorValue, type StyleProp, type TextStyle } from 'react-native';
-
-type IconMapping = Record<SymbolViewProps['name'], ComponentProps<typeof MaterialIcons>['name']>;
+type IconMapping = Record<SymbolViewProps["name"], any>;
 type IconSymbolName = keyof typeof MAPPING;
 
 /**
- * Add your SF Symbols to Material Icons mappings here.
- * - see Material Icons in the [Icons Directory](https://icons.expo.fyi).
- * - see SF Symbols in the [SF Symbols](https://developer.apple.com/sf-symbols/) app.
+ * 아이콘 이미지 매핑
+ * focused와 unfocused 상태 모두 추가
  */
 const MAPPING = {
-  'house.fill': 'home',
-  'paperplane.fill': 'send',
-  'chevron.left.forwardslash.chevron.right': 'code',
-  'chevron.right': 'chevron-right',
+  // 홈 아이콘
+  "house.fill": require("@/assets/icon/home.png"),
+  house: require("@/assets/icon/home.png"),
+
+  // 갤러리 아이콘
+  "photo.fill": require("@/assets/icon/gallery.png"),
+  photo: require("@/assets/icon/gallery.png"),
+
+  // 커스텀 아이콘
+  "paintbrush.fill": require("@/assets/icon/custom.png"),
+  paintbrush: require("@/assets/icon/custom.png"),
+
+  // 매거진 아이콘
+  "book.fill": require("@/assets/icon/magazine.png"),
+  book: require("@/assets/icon/magazine.png"),
+
+  // 유저 아이콘
+  "person.fill": require("@/assets/icon/user.png"),
+  person: require("@/assets/icon/user.png"),
+
+  // 기존 아이콘들 (호환성을 위해 유지)
+  "chevron.left.forwardslash.chevron.right": require("@/assets/icon/custom.png"),
+  "paperplane.fill": require("@/assets/icon/magazine.png"),
 } as IconMapping;
 
 /**
- * An icon component that uses native SF Symbols on iOS, and Material Icons on Android and web.
- * This ensures a consistent look across platforms, and optimal resource usage.
- * Icon `name`s are based on SF Symbols and require manual mapping to Material Icons.
+ * 이미지 기반 아이콘 컴포넌트
  */
 export function IconSymbol({
   name,
@@ -33,9 +50,34 @@ export function IconSymbol({
 }: {
   name: IconSymbolName;
   size?: number;
-  color: string | OpaqueColorValue;
-  style?: StyleProp<TextStyle>;
+  color?: string | OpaqueColorValue;
+  style?: StyleProp<ImageStyle>;
   weight?: SymbolWeight;
 }) {
-  return <MaterialIcons color={color} size={size} name={MAPPING[name]} style={style} />;
+  const iconSource = MAPPING[name];
+
+  if (!iconSource) {
+    console.warn(`Icon "${name}" not found in mapping`);
+    return null;
+  }
+
+  return (
+    <Image
+      source={iconSource}
+      style={[
+        {
+          width: size,
+          height: size,
+          tintColor: color, // 색상 적용 (주석 해제)
+          opacity: 1, // 투명도 강제 설정
+        },
+        style,
+      ]}
+      contentFit="contain"
+      // 이미지 로드 에러 처리
+      onError={(error) => {
+        console.error(`Failed to load icon "${name}":`, error);
+      }}
+    />
+  );
 }

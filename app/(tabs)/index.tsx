@@ -67,9 +67,9 @@ export default function HomeScreen() {
           source={require("@/assets/images/cart.png")}
           style={{
             width: 26,
-            height: 26,
+            height: 28,
             position: "absolute",
-            right: 107.49,
+            right: 22,
           }}
         />
         <Image
@@ -84,7 +84,7 @@ export default function HomeScreen() {
         />
       </ThemedView>
       <ThemedText style={styles.headerSubtitle}>
-        아름다운 꽃을 선택해주세요
+        우리의 소중한 날, <br></br>기억에 오래 남을 향기로 채워주세요.
       </ThemedText>
 
       {/* 꽃 목록 */}
@@ -122,7 +122,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8f9fa",
+    backgroundColor: "#ffffffff",
   },
   header: {
     padding: 20,
@@ -131,8 +131,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   headerSubtitle: {
-    fontSize: 16,
-    color: "#666",
+    fontSize: 20,
+    color: "#323232",
+    marginTop: 34.88,
+    marginLeft: 25,
   },
   flowerGrid: {
     flexDirection: "row",
