@@ -1,62 +1,93 @@
 import { Image } from "expo-image";
-import { ScrollView, StyleSheet } from "react-native";
+import { useState } from "react";
+import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { getCategoryData } from "@/data/categories";
 
-// 꽃 데이터 예시 (실제 이미지 URL 사용)
-const flowers = [
+const articles = [
   {
     id: 1,
-    name: "장미",
-    price: 15000,
+    title: "기념일 추천 꽃",
+    subtitle: "기념일 추천 꽃, 꽃말, 꽃다발",
     image:
-      "https://images.unsplash.com/photo-1518895312237-a9e9e1c6203a?w=300&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=200&fit=crop",
+    date: "2024.03.15",
+    category: "기념일",
   },
   {
     id: 2,
-    name: "튤립",
-    price: 8000,
+    title: "감사 추천 꽃",
+    subtitle: "감사한 사람에게 주는 꽃 추천",
     image:
-      "https://images.unsplash.com/photo-1520637836862-4d197d17c93a?w=300&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1605716868855-7038cbb76739?w=400&h=200&fit=crop",
+    date: "2024.03.12",
+    category: "감사",
   },
   {
     id: 3,
-    name: "해바라기",
-    price: 12000,
+    title: "생일 추천 꽃",
+    subtitle: "각 꽃이 가진 특별한 의미를 알아보세요",
     image:
-      "https://images.unsplash.com/photo-1597848212624-e8bb13bb5e0c?w=300&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=400&h=200&fit=crop",
+    date: "2024.03.10",
+    category: "생일",
   },
   {
     id: 4,
-    name: "백합",
-    price: 18000,
+    title: "사랑 추천 꽃",
+    subtitle: "사랑하는 사람에게 선물하는 꽃",
     image:
-      "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=300&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=200&fit=crop",
+    date: "2024.03.08",
+    category: "사랑",
   },
   {
     id: 5,
-    name: "국화",
-    price: 10000,
+    title: "승진 추천 꽃",
+    subtitle: "승진한 분께 드리기 좋은 꽃",
     image:
-      "https://images.unsplash.com/photo-1574684891174-df0bc8e7a78c?w=300&h=300&fit=crop",
-  },
-  {
-    id: 6,
-    name: "카네이션",
-    price: 9000,
-    image:
-      "https://images.unsplash.com/photo-1551058545-d4635aa72e8e?w=300&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=200&fit=crop",
+    date: "2024.03.08",
+    category: "승진",
   },
 ];
 
+// 카테고리별 기본 이미지 정의
+const categoryImages = {
+  전체: require("@/assets/indexCategory/love.png"),
+  기념일: require("@/assets/indexCategory/anniversary.png"),
+  감사: require("@/assets/indexCategory/thank.png"),
+  생일: require("@/assets/indexCategory/birth.png"),
+  사랑: require("@/assets/indexCategory/love.png"),
+  승진: require("@/assets/indexCategory/promotion.png"),
+};
+
+// 카테고리별 선택된 상태 이미지 정의
+const categorySelectedImages = {
+  전체: require("@/assets/indexCategory/love2.png"),
+  기념일: require("@/assets/indexCategory/anniversary2.png"),
+  감사: require("@/assets/indexCategory/thank2.png"),
+  생일: require("@/assets/indexCategory/birth2.png"),
+  사랑: require("@/assets/indexCategory/love2.png"),
+  승진: require("@/assets/indexCategory/promotion2.png"),
+};
+
+const categories = ["기념일", "감사", "생일", "사랑", "승진"];
+
 export default function HomeScreen() {
+  const [selectedCategory, setSelectedCategory] = useState("기념일");
+
+  // 선택된 카테고리에 따라 데이터 가져오기
+  const currentData = getCategoryData(selectedCategory);
+
   return (
     <ScrollView style={styles.container}>
       {/* 헤더 */}
       <ThemedView
         style={{
-          position: "relative", // 추가
+          position: "relative",
           flexDirection: "row",
           alignItems: "center",
           paddingHorizontal: 20,
@@ -83,28 +114,53 @@ export default function HomeScreen() {
           }}
         />
       </ThemedView>
+
       <ThemedText style={styles.headerSubtitle}>
-        우리의 소중한 날, <br></br>기억에 오래 남을 향기로 채워주세요.
+        {currentData.title} <br></br>
+        {currentData.subtitle}
       </ThemedText>
+
+      {/* 카테고리 섹션 */}
+      <ThemedView style={styles.categorySection}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.categoryScrollView}
+        >
+          {categories.map((category) => (
+            <TouchableOpacity
+              key={category}
+              onPress={() => setSelectedCategory(category)}
+              style={styles.categoryButton}
+            >
+              <Image
+                source={
+                  selectedCategory === category
+                    ? categorySelectedImages[category]
+                    : categoryImages[category]
+                }
+                style={styles.categoryImage}
+              />
+              <ThemedText style={styles.categoryText}>{category}</ThemedText>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </ThemedView>
 
       {/* 꽃 목록 */}
       <ThemedView style={styles.flowerGrid}>
-        {flowers.map((flower) => (
+        {currentData.flowers.map((flower) => (
           <ThemedView key={flower.id} style={styles.flowerCard}>
-            <Image
-              source={{ uri: flower.image }}
-              style={styles.flowerImage}
-              contentFit="cover"
-            />
+            <Image source={{ uri: flower.image }} style={styles.flowerImage} />
             <ThemedText type="defaultSemiBold" style={styles.flowerName}>
               {flower.name}
             </ThemedText>
             <ThemedText style={styles.flowerPrice}>
               {flower.price.toLocaleString()}원
             </ThemedText>
-            <ThemedView style={styles.addButton}>
+            <TouchableOpacity style={styles.addButton}>
               <ThemedText style={styles.addButtonText}>담기</ThemedText>
-            </ThemedView>
+            </TouchableOpacity>
           </ThemedView>
         ))}
       </ThemedView>
@@ -135,6 +191,31 @@ const styles = StyleSheet.create({
     color: "#323232",
     marginTop: 34.88,
     marginLeft: 25,
+    marginBottom: 20,
+  },
+  categorySection: {
+    marginBottom: 20,
+  },
+  categoryScrollView: {
+    paddingHorizontal: 15,
+  },
+  categoryButton: {
+    alignItems: "center",
+    marginRight: 3,
+    padding: 10,
+    borderRadius: 15,
+    minWidth: 80,
+  },
+  categoryImage: {
+    width: 61,
+    height: 61,
+    borderRadius: 25,
+    marginBottom: 8,
+  },
+  categoryText: {
+    fontSize: 12,
+    color: "#666",
+    textAlign: "center",
   },
   flowerGrid: {
     flexDirection: "row",
